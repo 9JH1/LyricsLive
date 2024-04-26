@@ -4,12 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title id="title">LyricsLive</title>
+    <link rel="icon" href="https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico">
     <style>
         body {
             width: 100vw;
             height: 100vh;
             margin: 0;
+            padding: 0;
+            background: #121212;
 
         }
 
@@ -26,7 +29,6 @@
         #messy-lyrics {
             color: white;
             font-family: "CircularSpotifyText-Bold";
-            background: #333333;
             width: 100vw;
             overflow-x: hidden;
             text-wrap: nowrap;
@@ -43,21 +45,45 @@
             }
         }
 
+        a {
+            color: white;
+            text-decoration: none;
+        }
+
         .song {
             position: fixed;
             top: 0;
             right: 0;
-            color: white;
+            color: #1ed760;
             font-family: "CircularSpotifyText-Bold";
-            font-size: 2.5vw;
-            padding: 3vh 6vh 3vh 3vh;
+            font-size: 2.3vw;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0px;
+            scale: 0.7;
+            gap: 20px;
+            margin-top: 3vw;
+
+        }
+
+        .gradient {
+            width: 100vw;
+            height: 30vh;
+            position: fixed;
+            background: linear-gradient(#211160, transparent);
+            z-index: -1;
         }
     </style>
 </head>
 
 <body>
+    <div class="gradient"></div>
     <div id="messy-lyrics"></div>
-    <div class="song"></div>
+    <div class="song">
+        <div id="song-title"></div>
+        <img src="https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico" alt="">
+    </div>
     <script>
         function getData2(endpoint) {
             return fetch(`http://127.0.0.1:5000${endpoint}`)
@@ -94,7 +120,8 @@
                 if (title !== newTitle) {
                     document.getElementById("messy-lyrics").innerHTML = await getData2("/lyrics");
                     title = await getData2("/spotify");
-                    document.getElementsByClassName("song")[0].innerHTML = title;
+                    document.getElementById("title").innerHTML = `LyricsLive - ${title.split("-")[1]}`
+                    document.getElementById("song-title").innerHTML = title;
                     removeAllAttributesFromBody();
                 }
             }, 1000)

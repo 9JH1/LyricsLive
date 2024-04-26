@@ -58,7 +58,7 @@ def render_song_info():
     spotify_song = ""
     for process_name, windows in get_window_titles().items():
         if(process_name == "Spotify.exe"):
-            spotify_song = [s.strip() for s in windows[0]["title"].split("-")]
+            spotify_song = [s.strip() for s in windows[0]["title"].split("-", 1)]
     return f"{spotify_song[0]} - {spotify_song[1]}"
 @app.route("/")
 def render_website():
@@ -68,11 +68,20 @@ def render_website():
 def render_lyrics():
     spotify_song = ""
     for process_name, windows in get_window_titles().items():
-        if(process_name == "Spotify.exe"):
-            spotify_song = [s.strip() for s in windows[0]["title"].split("-")]
-    lyrics = scrape_lyrics_containers(f"https://genius.com/{spotify_song[0].replace(" ","-")}-{spotify_song[1].replace(" ","-").lower().replace(",","")}-lyrics")
+        if process_name == "Spotify.exe":
+            spotify_song = [s.strip() for s in windows[0]["title"].split("-", 1)]
+            spotify_song[1].replace("-"," ")
 
-    print(f"https://genius.com/{spotify_song[0].replace(" ","-")}-{spotify_song[1].replace(" ","-").lower()}-lyrics")
+    # Extract artist name and song title
+    artist_name = re.sub(r'[^a-zA-Z0-9\s]', '', spotify_song[0]).strip()
+    song_title = re.sub(r'[^a-zA-Z0-9\s]', ' ', spotify_song[1]).strip()
+
+    # Construct the Genius URL with properly formatted artist name and song title
+    artist_name_url = re.sub(r'\s+', '-', artist_name)
+    song_title_url = re.sub(r'\s+', '-', song_title)
+    genius_url = f"https://genius.com/{artist_name_url}-{song_title_url.lower()}-lyrics"
+    print(genius_url)
+    lyrics = scrape_lyrics_containers(genius_url)
     return remove_words_in_brackets(str(lyrics)[1:-1])
 
 if __name__ == "__main__": 
