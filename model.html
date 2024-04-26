@@ -207,7 +207,15 @@
                     title = await getData2("/spotify");
                     document.getElementById("title").innerHTML = `LyricsLive - ${title.split("-")[1]}`
                     document.getElementById("song-title").innerHTML = title;
-                    removeAllAttributesFromBody();
+                    document.getElementById("messy-lyrics").scrollTop = 0;
+                    document.getElementById("messy-lyrics").scrollIntoView();
+                    document.getElementById("messy-lyrics").scroll({ top: 0, behavior: 'smooth' });
+                    const tabScroll = document.getElementById("messy-lyrics");
+                    window.scrollTo({
+                        'behavior': 'smooth',
+                        'left': 0,
+                        'top': tabScroll.offsetTop - 80
+                    });
                 }
             }, 1000)
         })()

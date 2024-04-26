@@ -7,9 +7,6 @@ import flask
 from flask_cors import CORS
 import re
 
-
-
-
 def get_window_titles():
     window_data = {}
     def enum_windows_callback(hwnd, _):
@@ -31,6 +28,8 @@ def get_window_titles():
 
 
 
+
+# this will work cross-platform
 def scrape_lyrics_containers(url):
     response = requests.get(url)
     if response.status_code == 200:
@@ -42,9 +41,7 @@ def scrape_lyrics_containers(url):
         return []
 
 def remove_words_in_brackets(text):
-    # Define a regular expression pattern to match words enclosed in square brackets
     pattern = r'\[[^\]]+\]'
-    # Use re.sub() to remove words matching the pattern
     cleaned_text = re.sub(pattern, '', text)
     return cleaned_text
 
@@ -71,12 +68,8 @@ def render_lyrics():
         if process_name == "Spotify.exe":
             spotify_song = [s.strip() for s in windows[0]["title"].split("-", 1)]
             spotify_song[1].replace("-"," ")
-
-    # Extract artist name and song title
     artist_name = re.sub(r'[^a-zA-Z0-9\s]', '', spotify_song[0]).strip()
     song_title = re.sub(r'[^a-zA-Z0-9\s]', ' ', spotify_song[1]).strip()
-
-    # Construct the Genius URL with properly formatted artist name and song title
     artist_name_url = re.sub(r'\s+', '-', artist_name)
     song_title_url = re.sub(r'\s+', '-', song_title)
     genius_url = f"https://genius.com/{artist_name_url}-{song_title_url.lower()}-lyrics"
