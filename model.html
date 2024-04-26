@@ -66,7 +66,7 @@
 
             img {
                 width: 1.5vw;
-                margin-left: 10px;
+                margin-left: 1vw;
             }
 
         }
@@ -77,6 +77,8 @@
             position: fixed;
             background: linear-gradient(#211160, transparent);
             z-index: -1;
+            transform: translateY(-100%);
+            animation: grad-in 3s ease-out forwards;
         }
 
         #fullscreen {
@@ -101,6 +103,12 @@
 
         #fullscreen:hover {
             opacity: 1;
+        }
+
+        @keyframes grad-in {
+            to {
+                transform: translateY(0%)
+            }
         }
     </style>
 </head>
