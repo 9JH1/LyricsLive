@@ -4,102 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        body {
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-
-        }
-
-        @font-face {
-            font-family: 'CircularSpotifyText-Bold';
-            src: url('font/CircularSpotifyText-Bold.woff2') format('woff2'),
-                /* Modern Browsers */
-                url('font/CircularSpotifyText-Bold.woff') format('woff');
-            /* Legacy Browsers */
-            font-weight: bold;
-            font-style: normal;
-        }
-
-        #messy-lyrics {
-            color: white;
-            font-family: "CircularSpotifyText-Bold";
-            background: #333333;
-            width: 100vw;
-            overflow-x: hidden;
-            text-wrap: nowrap;
-            overflow-y: scroll;
-            height: 100vh;
-            font-size: 2.5vw;
-            padding: 3vh;
-            box-sizing: border-box;
-
-
-            * {
-
-                font-style: normal;
-            }
-        }
-
-        .song {
-            position: fixed;
-            top: 0;
-            right: 0;
-            color: white;
-            font-family: "CircularSpotifyText-Bold";
-            font-size: 2.5vw;
-            padding: 3vh 6vh 3vh 3vh;
-        }
-    </style>
+    <title>LyricsLive</title>
 </head>
 
 <body>
-    <div id="messy-lyrics"></div>
-    <div class="song"></div>
-    <script>
-        function getData2(endpoint) {
-            return fetch(`http://127.0.0.1:5000${endpoint}`)
-                .then((res) => res.text())
-                .catch((error) => {
-                    console.error(error);
-                });
-        };
-        function removeAllAttributesFromBody() {
-            var allElements = document.getElementById("messy-lyrics").getElementsByTagName("*");
-
-            for (var i = 0; i < allElements.length; i++) {
-                var element = allElements[i];
-                var attributes = element.attributes;
-
-                for (var j = 0; j < attributes.length; j++) {
-                    element.removeAttribute(attributes[j].name);
-                }
-            }
-            function removeHrefFromAnchorTags() {
-                var anchorTags = document.getElementById("messy-lyrics").getElementsByTagName("a");
-
-                for (var i = 0; i < anchorTags.length; i++) {
-                    anchorTags[i].removeAttribute("href");
-                }
-            }
-            removeHrefFromAnchorTags()
-
-        }
-        let title;
-        (async () => {
-            setInterval(async () => {
-                let newTitle = await getData2("/spotify")
-                if (title !== newTitle) {
-                    document.getElementById("messy-lyrics").innerHTML = await getData2("/lyrics");
-                    title = await getData2("/spotify");
-                    document.getElementsByClassName("song")[0].innerHTML = title;
-                    removeAllAttributesFromBody();
-                }
-            }, 1000)
-        })()
-    </script>
+    hello world
 </body>
 
 </html>
