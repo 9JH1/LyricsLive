@@ -62,17 +62,8 @@ def get_spotify_song_linux():
             return string.encode('utf-8')
 
 
-    def truncate(name, trunclen):
-        if len(name) > trunclen:
-            name = name[:trunclen]
-            name += '...'
-            if ('(' in name) and (')' not in name):
-                name += ')'
-        return name
-
-
     # Default parameters
-    output = fix_string(u'{play_pause} {artist}: {song}')
+    output = fix_string(u'{artist} - {song}')
     trunclen = 35
     play_pause = fix_string(u'\u25B6,\u23F8') # first character is play, second is paused
 
@@ -104,21 +95,6 @@ def get_spotify_song_linux():
 
         metadata = spotify_properties.Get('org.mpris.MediaPlayer2.Player', 'Metadata')
         status = spotify_properties.Get('org.mpris.MediaPlayer2.Player', 'PlaybackStatus')
-
-        # Handle play/pause label
-
-        play_pause = play_pause.split(',')
-
-        if status == 'Playing':
-            play_pause = play_pause[0]
-        elif status == 'Paused':
-            play_pause = play_pause[1]
-        else:
-            play_pause = str()
-
-        if play_pause_font:
-            play_pause = label_with_font.format(font=play_pause_font, label=play_pause)
-
         # Handle main label
 
         artist = fix_string(metadata['xesam:artist'][0]) if metadata['xesam:artist'] else ''
@@ -134,17 +110,13 @@ def get_spotify_song_linux():
                 album = label_with_font.format(font=font, label=album)
 
             # Add 4 to trunclen to account for status symbol, spaces, and other padding characters
-            return(truncate(output.format(artist=artist, 
+            return(output.format(artist=artist, 
                                         song=song, 
                                         play_pause=play_pause, 
-                                        album=album), trunclen + 4))
+                                        album=album))
 
     except Exception as e:
             print(e)
-
-
-print(get_spotify_song_linux())
-exit()
 
 
 
@@ -171,18 +143,15 @@ CORS(app)
 
 @app.route("/spotify")
 def render_song_info():
-    spotify_song = ""
-    for process_name, windows in get_window_titles().items():
-        if(process_name == "Spotify.exe"):
-            spotify_song = [s.strip() for s in windows[0]["title"].split("-", 1)]
-    return f"{spotify_song[0]} - {spotify_song[1]}"
+    return get_spotify_song_linux()
+
 @app.route("/")
 def render_website():
     return flask.render_template("index.html")
 
 @app.route("/lyrics")
 def render_lyrics():
-    spotify_song = ""
+    spotify_song = get_spotify_song_linux().split("-")
     # define with dbus 
     artist_name = re.sub(r'[^a-zA-Z0-9\s]', '', spotify_song[0]).strip()
     song_title = re.sub(r'[^a-zA-Z0-9\s]', ' ', spotify_song[1]).strip()
