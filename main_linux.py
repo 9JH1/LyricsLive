@@ -71,7 +71,6 @@ def get_spotify_song_linux():
         return name
 
 
-
     # Default parameters
     output = fix_string(u'{play_pause} {artist}: {song}')
     trunclen = 35
@@ -144,7 +143,8 @@ def get_spotify_song_linux():
             print(e)
 
 
-
+print(get_spotify_song_linux())
+exit()
 
 
 
