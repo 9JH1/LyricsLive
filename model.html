@@ -211,6 +211,7 @@
                     document.getElementById("messy-lyrics").scrollIntoView();
                     document.getElementById("messy-lyrics").scroll({ top: 0, behavior: 'smooth' });
                     const tabScroll = document.getElementById("messy-lyrics");
+                    removeAllAttributesFromBody()
                     window.scrollTo({
                         'behavior': 'smooth',
                         'left': 0,
