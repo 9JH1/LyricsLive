@@ -68,6 +68,8 @@ def render_lyrics():
         if process_name == "Spotify.exe":
             spotify_song = [s.strip() for s in windows[0]["title"].split("-", 1)]
             spotify_song[1].replace("-"," ")
+            
+    spotify_song[1] = spotify_song[1].replace(".","")
     artist_name = re.sub(r'[^a-zA-Z0-9\s]', '', spotify_song[0]).strip()
     song_title = re.sub(r'[^a-zA-Z0-9\s]', ' ', spotify_song[1]).strip()
     artist_name_url = re.sub(r'\s+', '-', artist_name)
