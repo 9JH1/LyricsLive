@@ -6,6 +6,8 @@ import win32process
 import flask
 from flask_cors import CORS
 import re
+import os
+os.system("title LyricsLive Public Release, software by git@9JH1")
 
 def get_window_titles():
     window_data = {}
