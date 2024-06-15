@@ -152,7 +152,7 @@ def render_website():
 @app.route("/lyrics")
 def render_lyrics():
     spotify_song = get_spotify_song_linux().split("-")
-    # define with dbus 
+    spotify_song[1].replace("-"," ")
     spotify_song[1] = spotify_song[1].replace(".","")
     spotify_song[1] = spotify_song[1].replace("'","")
     artist_name = re.sub(r'[^a-zA-Z0-9\s]', '', spotify_song[0]).strip()
@@ -163,6 +163,5 @@ def render_lyrics():
     print(genius_url)
     lyrics = scrape_lyrics_containers(genius_url)
     return remove_words_in_brackets(str(lyrics)[1:-1])
-
 if __name__ == "__main__": 
     app.run(debug=True)
