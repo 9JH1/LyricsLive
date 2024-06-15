@@ -52,6 +52,7 @@
                 left: 50%;
                 width: 100vw;
                 flex-wrap: wrap;
+
                 .title {
                     text-align: center;
 
@@ -61,7 +62,7 @@
                         justify-content: center;
 
                         .scrolling-words-container {
-                            
+
                             display: flex;
                             align-items: center;
                             font-size: 2rem;
@@ -72,9 +73,9 @@
                             height: 3rem;
                             margin: auto;
                             overflow: hidden;
-                            background: linear-gradient(90deg,#1ed760,#149140);
+                            background: linear-gradient(90deg, #1ed760, #149140);
                             border-radius: 20px;
-                            margin-right:20px;
+                            margin-right: 20px;
                         }
 
                         .scrolling-words-box ul {
@@ -89,7 +90,7 @@
                             justify-content: center;
                             height: 3rem;
                             list-style: none;
-                            
+
                         }
 
                         /* Additional styles */
@@ -98,157 +99,158 @@
                         }
                     }
                 }
-            
-                .desc { 
-                        width:100%;
-                        display:flex;
-                        justify-content: center;
-                        .desc-inner { 
-                            width:50%;
+
+                .desc {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+
+                    .desc-inner {
+                        width: 50%;
 
                         text-align: center;
-                        color:rgb(80, 79, 79);
-                        }
-                    }
-                }
-
-                .download {
-                    width: 90vw;
-                    height: fit-content;
-                    background-color: black;
-                    position: absolute;
-                    bottom: 0%;
-                    padding: 20px;
-                    border-radius: 30px 30px 0px 0px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    color: white;
-
-                    a {
-                        color: #1ed760;
-                    }
-
-                    a:hover {
-                        text-decoration: underline;
-
+                        color: rgb(80, 79, 79);
                     }
                 }
             }
 
-            #messy-lyrics {
+            .download {
+                width: 90vw;
+                height: fit-content;
+                background-color: black;
+                position: absolute;
+                bottom: 0%;
+                padding: 20px;
+                border-radius: 30px 30px 0px 0px;
+                left: 50%;
+                transform: translateX(-50%);
                 color: white;
-                font-family: "CircularSpotifyText-Bold";
-                width: 100vw;
-                overflow-x: hidden;
-                text-wrap: nowrap;
-                overflow-y: scroll;
-                height: 100vh;
-                font-size: 2.5vw;
-                padding: 1.5vw;
-                box-sizing: border-box;
-                scrollbar-width: thin;
 
-                * {
-                    font-style: normal;
+                a {
+                    color: #1ed760;
+                }
+
+                a:hover {
+                    text-decoration: underline;
+
                 }
             }
+        }
 
-            a {
-                color: white;
-                text-decoration: none;
+        #messy-lyrics {
+            color: white;
+            font-family: "CircularSpotifyText-Bold";
+            width: 100vw;
+            overflow-x: hidden;
+            text-wrap: nowrap;
+            overflow-y: scroll;
+            height: 100vh;
+            font-size: 2.5vw;
+            padding: 1.5vw;
+            box-sizing: border-box;
+            scrollbar-width: thin;
+
+            * {
+                font-style: normal;
             }
+        }
 
-            .song {
-                position: fixed;
-                top: 0;
-                right: 0;
-                opacity:0;
-                color: #1ed760;
-                font-family: "CircularSpotifyText-Bold";
-                font-size: 2.3vw;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                font-size: 1.5vw;
-                margin: 2vw;
+        a {
+            color: white;
+            text-decoration: none;
+        }
 
-                img {
-                    width: 1.5vw;
-                    margin-left: 1vw;
-                }
-            }
+        .song {
+            position: fixed;
+            top: 0;
+            right: 0;
+            opacity: 0;
+            color: #1ed760;
+            font-family: "CircularSpotifyText-Bold";
+            font-size: 2.3vw;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.5vw;
+            margin: 2vw;
 
-            .gradient {
-                width: 100vw;
-                height: 30vh;
-                position: fixed;
-                background: linear-gradient(#211160, transparent);
-                z-index: -1;
-                transform: translateY(-100%);
-                animation: grad-in 3s ease-out forwards;
-            }
-
-            #fullscreen {
-                position: fixed;
+            img {
                 width: 1.5vw;
-                height: 1.5vw;
-                bottom: 0;
-                margin: 1.5vw;
-                right: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                opacity: 0;
-                transition: opacity 0.3s;
+                margin-left: 1vw;
+            }
+        }
 
-                svg {
-                    path {
-                        fill: white;
-                    }
+        .gradient {
+            width: 100vw;
+            height: 30vh;
+            position: fixed;
+            background: linear-gradient(#211160, transparent);
+            z-index: -1;
+            transform: translateY(-100%);
+            animation: grad-in 3s ease-out forwards;
+        }
+
+        #fullscreen {
+            position: fixed;
+            width: 1.5vw;
+            height: 1.5vw;
+            bottom: 0;
+            margin: 1.5vw;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+
+            svg {
+                path {
+                    fill: white;
                 }
             }
+        }
 
-            #fullscreen:hover {
-                opacity: 1;
+        #fullscreen:hover {
+            opacity: 1;
+        }
+
+        @keyframes grad-in {
+            to {
+                transform: translateY(0%);
+            }
+        }
+
+
+        /* Keyframes converted from SCSS */
+        @keyframes scrollUp {
+
+            10%,
+            25% {
+                transform: translateY(-20%);
             }
 
-            @keyframes grad-in {
-                to {
-                    transform: translateY(0%);
-                }
+            35%,
+            50% {
+                transform: translateY(-40%);
             }
 
-
-            /* Keyframes converted from SCSS */
-            @keyframes scrollUp {
-
-                10%,
-                25% {
-                    transform: translateY(-20%);
-                }
-
-                35%,
-                50% {
-                    transform: translateY(-40%);
-                }
-
-                60%,
-                75% {
-                    transform: translateY(-60%);
-                }
-
-                85%,
-                100% {
-                    transform: translateY(-80%);
-                }
+            60%,
+            75% {
+                transform: translateY(-60%);
             }
+
+            85%,
+            100% {
+                transform: translateY(-80%);
+            }
+        }
     </style>
 </head>
 
 <body>
     <div id="first-page">
         <div class="circle">
-            
+
         </div>
         <div class="text">
             <div class="title">
@@ -269,9 +271,9 @@
             <div class="desc">
                 <div class="desc-inner">
 
-                Welcome, using this program you can give native lyrics support to
-                nearly every song in your favorite Spotify playlist, simply download
-                the app and visit this website to begin
+                    Welcome, using this program you can give native lyrics support to
+                    nearly every song in your favorite Spotify playlist, simply download
+                    the app and visit this website to begin
                 </div>
             </div>
         </div>
@@ -279,7 +281,7 @@
             <h2>Download LyricsLive</h2>
             <ul>
                 <li>
-                    Windows ( <a href="main.exe" download>Current</a> | <a href="main.py" download>raw</a> ) 
+                    Windows ( <a href="main.exe" download>Current</a> | <a href="main.py" download>raw</a> )
                 </li>
                 <li>
                     Linux ( <a href="main_linux.py" download>raw</a>) |Requires python-dbus
@@ -308,7 +310,7 @@
                     console.error(error);
                 });
         }
-        
+
         let fullScreenToggle = "False";
         document.getElementById("fullscreen").addEventListener("click", () => {
             if (fullScreenToggle == "False") {
@@ -387,7 +389,7 @@
                     document.getElementById("messy-lyrics").innerHTML = await getData2(
                         "/lyrics"
                     );
-                    if(document.getElementById("messy-lyrics").innerHTML == "undefined"){ 
+                    if (document.getElementById("messy-lyrics").innerHTML == "undefined") {
                         location.reload()
                     }
                     title = await getData2("/spotify");
@@ -410,25 +412,27 @@
             }, 1000);
         }
         document.addEventListener("DOMContentLoaded", function () {
-        var ul = document.querySelector(".scrolling-words-box ul");
-        var itemCount = 5; // Equivalent to $item-count in SCSS
+            var ul = document.querySelector(".scrolling-words-box ul");
+            var itemCount = 5; // Equivalent to $item-count in SCSS
 
-        // Calculate animation duration based on number of items
-        var animationDuration = itemCount * 4; // Adjust speed as needed
-        ul.style.animationDuration = animationDuration + "s";
-      });
-      setInterval(async ()=>{
-        try {
-            if(await getData2("/spotify")){ 
-                document.getElementById("fullscreen").style.opacity = 0.5;
-                document.getElementsByClassName("song")[0].style.opacity = 1;
-                document.getElementById("first-page").remove()
-                startLoading()
+            // Calculate animation duration based on number of items
+            var animationDuration = itemCount * 4; // Adjust speed as needed
+            ul.style.animationDuration = animationDuration + "s";
+        });
+        const awaitServer = setInterval(async () => {
+            try {
+                if (await getData2("/spotify")) {
+                    document.getElementById("fullscreen").style.opacity = 0.5;
+                    document.getElementsByClassName("song")[0].style.opacity = 1;
+                    document.getElementById("first-page").remove();
+                    startLoading();
+                    clearInterval(awaitServer);
+                }
+            } catch (e) {
+                console.log(e);
             }
-        } catch (e){ 
-            console.log(e)
-        }
-      },1000)
+        }, 1000);
+
     </script>
 </body>
 
