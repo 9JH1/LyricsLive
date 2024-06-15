@@ -1,51 +1,435 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LyricsLive</title>
-    <style></style>
-  </head>
+    <title id="title">LyricsLive</title>
+    <link rel="icon" href="https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico" />
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            background: #121212;
+        }
 
-  <body>
-    <h2>README</h2>
-    <p>
-      welcome to LyricsLive, this program works with the spotify desktop app to
-      give better lyrics support,
-    </p>
-    <h2>Windows Guide</h2>
+        @font-face {
+            font-family: "CircularSpotifyText-Bold";
+            src: url("font/CircularSpotifyText-Bold.woff2") format("woff2"),
+                /* Modern Browsers */
+                url("font/CircularSpotifyText-Bold.woff") format("woff");
+            /* Legacy Browsers */
+            font-weight: bold;
+            font-style: normal;
+        }
 
-    <p>download the script below</p>
-    <p><a href="main.exe">windows download</a></p>
-    <p>once that script is running ensure that spotify is on</p>
-    <p>when all of that is done open <a href="model.html">this link</a></p>
-    <br />
-    <p>
-      if the website shows "undefined" check that the main.exe script is both
-      running and not showing any errors, to tell if there are errors check the
-      text on the main.exe script window, if there is any point where the word
-      "error" is found then try to open the spotify app and selet the "x"
-      instead of the "-" button, for this to work you need to have "minimise on
-      close" on in spotifys preferences.
-    </p>
-    <br />
-    <h2>Linux Guide</h2>
-    <p>download the script below</p>
-    <p><a href="main_linux.py">linux download ( dbus )</a></p>
-    <p>ensure that python is installed</p>
-    <p>
-      ensure that all the modules used in the main_linux.py file are installed
-      either in the same venv as the script or global, to install packages
-      globally use <code>--break-system-packages</code> at the end of the pip
-      install command
-    </p>
-    <p>
-      after all of that is done, and working go to
-      <a href="model.html"> this link</a>.
-    </p>
-    <p>
-      this program is not in any way associated with the offical spotify company
-    </p>
-    <p>copyright (2024) 3hy</p>
-  </body>
+        #first-page {
+            color: white;
+            font-family: "CircularSpotifyText-Bold";
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: end;
+            overflow: hidden;
+
+            .circle {
+                width: 100vw;
+                height: 100vw;
+                background: linear-gradient(125deg,
+                        rgb(0, 0, 0, 0.5),
+                        rgba(12, 12, 12, 0.5));
+                transform: translateY(60%);
+                border-radius: 100% 100% 0px 0px;
+            }
+
+            .text {
+                position: absolute;
+                transform: translateX(-50%) translateY(-50%);
+                top: 50%;
+                left: 50%;
+                width: 100vw;
+                flex-wrap: wrap;
+                .title {
+                    text-align: center;
+
+                    h2 {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+
+                        .scrolling-words-container {
+                            
+                            display: flex;
+                            align-items: center;
+                            font-size: 2rem;
+                            font-weight: 600;
+                        }
+
+                        .scrolling-words-box {
+                            height: 3rem;
+                            margin: auto;
+                            overflow: hidden;
+                            background: linear-gradient(90deg,#1ed760,#149140);
+                            border-radius: 20px;
+                            margin-right:20px;
+                        }
+
+                        .scrolling-words-box ul {
+                            margin: 0 0.625rem;
+                            padding: 0;
+                            animation: scrollUp 4s infinite;
+                        }
+
+                        .scrolling-words-box ul li {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            height: 3rem;
+                            list-style: none;
+                            
+                        }
+
+                        /* Additional styles */
+                        span {
+                            color: #ffffff;
+                        }
+                    }
+                }
+            
+                .desc { 
+                        width:100%;
+                        display:flex;
+                        justify-content: center;
+                        .desc-inner { 
+                            width:50%;
+
+                        text-align: center;
+                        color:rgb(80, 79, 79);
+                        }
+                    }
+                }
+
+                .download {
+                    width: 90vw;
+                    height: fit-content;
+                    background-color: black;
+                    position: absolute;
+                    bottom: 0%;
+                    padding: 20px;
+                    border-radius: 30px 30px 0px 0px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    color: white;
+
+                    a {
+                        color: #1ed760;
+                    }
+
+                    a:hover {
+                        text-decoration: underline;
+
+                    }
+                }
+            }
+
+            #messy-lyrics {
+                color: white;
+                font-family: "CircularSpotifyText-Bold";
+                width: 100vw;
+                overflow-x: hidden;
+                text-wrap: nowrap;
+                overflow-y: scroll;
+                height: 100vh;
+                font-size: 2.5vw;
+                padding: 1.5vw;
+                box-sizing: border-box;
+                scrollbar-width: thin;
+
+                * {
+                    font-style: normal;
+                }
+            }
+
+            a {
+                color: white;
+                text-decoration: none;
+            }
+
+            .song {
+                position: fixed;
+                top: 0;
+                right: 0;
+                opacity:0;
+                color: #1ed760;
+                font-family: "CircularSpotifyText-Bold";
+                font-size: 2.3vw;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-size: 1.5vw;
+                margin: 2vw;
+
+                img {
+                    width: 1.5vw;
+                    margin-left: 1vw;
+                }
+            }
+
+            .gradient {
+                width: 100vw;
+                height: 30vh;
+                position: fixed;
+                background: linear-gradient(#211160, transparent);
+                z-index: -1;
+                transform: translateY(-100%);
+                animation: grad-in 3s ease-out forwards;
+            }
+
+            #fullscreen {
+                position: fixed;
+                width: 1.5vw;
+                height: 1.5vw;
+                bottom: 0;
+                margin: 1.5vw;
+                right: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 0;
+                transition: opacity 0.3s;
+
+                svg {
+                    path {
+                        fill: white;
+                    }
+                }
+            }
+
+            #fullscreen:hover {
+                opacity: 1;
+            }
+
+            @keyframes grad-in {
+                to {
+                    transform: translateY(0%);
+                }
+            }
+
+
+            /* Keyframes converted from SCSS */
+            @keyframes scrollUp {
+
+                10%,
+                25% {
+                    transform: translateY(-20%);
+                }
+
+                35%,
+                50% {
+                    transform: translateY(-40%);
+                }
+
+                60%,
+                75% {
+                    transform: translateY(-60%);
+                }
+
+                85%,
+                100% {
+                    transform: translateY(-80%);
+                }
+            }
+    </style>
+</head>
+
+<body>
+    <div id="first-page">
+        <div class="circle">
+            
+        </div>
+        <div class="text">
+            <div class="title">
+                <h2>
+                    <div class="scrolling-words-container">
+                        <div class="scrolling-words-box">
+                            <ul>
+                                <li>Playlists Are </li>
+                                <li>Songs Are </li>
+                                <li>Karaoke Is </li>
+                                <li>Spotify Is</li>
+                                <li>Singing Is</li>
+                            </ul>
+                        </div>
+                        <span>better with Lyrics</span>
+                </h2>
+            </div>
+            <div class="desc">
+                <div class="desc-inner">
+
+                Welcome, using this program you can give native lyrics support to
+                nearly every song in your favorite Spotify playlist, simply download
+                the app and visit this website to begin
+                </div>
+            </div>
+        </div>
+        <div class="download">
+            <h2>Download LyricsLive</h2>
+            <ul>
+                <li>
+                    Windows ( <a href="main.exe" download>Current</a> | <a href="main.py" download>raw</a> )
+                </li>
+                <li>
+                    Linux ( <a href="main_linux.py" download>raw</a>)
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="gradient"></div>
+    <div id="messy-lyrics"></div>
+    <div class="song">
+        <div id="song-title"></div>
+        <img src="https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico" alt="" />
+    </div>
+    <div id="fullscreen">
+        <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 16 16" class="Svg-sc-ytk21e-0 dYnaPI">
+            <path
+                d="M6.53 9.47a.75.75 0 0 1 0 1.06l-2.72 2.72h1.018a.75.75 0 0 1 0 1.5H1.25v-3.579a.75.75 0 0 1 1.5 0v1.018l2.72-2.72a.75.75 0 0 1 1.06 0zm2.94-2.94a.75.75 0 0 1 0-1.06l2.72-2.72h-1.018a.75.75 0 1 1 0-1.5h3.578v3.579a.75.75 0 0 1-1.5 0V3.81l-2.72 2.72a.75.75 0 0 1-1.06 0z">
+            </path>
+        </svg>
+    </div>
+    <script>
+        function getData2(endpoint) {
+            return fetch(`http://127.0.0.1:5000${endpoint}`)
+                .then((res) => res.text())
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+        
+        let fullScreenToggle = "False";
+        document.getElementById("fullscreen").addEventListener("click", () => {
+            if (fullScreenToggle == "False") {
+                function goFullscreen() {
+                    const elem = document.body;
+                    if (elem.requestFullscreen) {
+                        elem.requestFullscreen();
+                    } else if (elem.mozRequestFullScreen) {
+                        elem.mozRequestFullScreen();
+                    } else if (elem.webkitRequestFullscreen) {
+                        elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) {
+                        elem.msRequestFullscreen();
+                    }
+                }
+
+                document.getElementById("fullscreen").innerHTML = `
+                  <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 24 24" class="Svg-sc-ytk21e-0 bneLcE"><path d="M21.707 2.293a1 1 0 0 1 0 1.414L17.414 8h1.829a1 1 0 0 1 0 2H14V4.757a1 1 0 1 1 2 0v1.829l4.293-4.293a1 1 0 0 1 1.414 0zM2.293 21.707a1 1 0 0 1 0-1.414L6.586 16H4.757a1 1 0 0 1 0-2H10v5.243a1 1 0 0 1-2 0v-1.829l-4.293 4.293a1 1 0 0 1-1.414 0z"></path></svg>
+                  `;
+                fullScreenToggle = "True";
+                goFullscreen();
+            } else {
+                function closeFullscreen() {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        /* Safari */
+                        document.webkitExitFullscreen();
+                    } else if (document.msExitFullscreen) {
+                        /* IE11 */
+                        document.msExitFullscreen();
+                    }
+                }
+                document.getElementById("fullscreen").innerHTML = `
+                  <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 16 16" class="Svg-sc-ytk21e-0 dYnaPI">
+                      <path
+                          d="M6.53 9.47a.75.75 0 0 1 0 1.06l-2.72 2.72h1.018a.75.75 0 0 1 0 1.5H1.25v-3.579a.75.75 0 0 1 1.5 0v1.018l2.72-2.72a.75.75 0 0 1 1.06 0zm2.94-2.94a.75.75 0 0 1 0-1.06l2.72-2.72h-1.018a.75.75 0 1 1 0-1.5h3.578v3.579a.75.75 0 0 1-1.5 0V3.81l-2.72 2.72a.75.75 0 0 1-1.06 0z">
+                      </path>
+                  </svg>
+                  `;
+                fullScreenToggle = "False";
+                closeFullscreen();
+            }
+        });
+        function removeAllAttributesFromBody() {
+            var allElements = document
+                .getElementById("messy-lyrics")
+                .getElementsByTagName("*");
+
+            for (var i = 0; i < allElements.length; i++) {
+                var element = allElements[i];
+                var attributes = element.attributes;
+
+                for (var j = 0; j < attributes.length; j++) {
+                    element.removeAttribute(attributes[j].name);
+                }
+            }
+            function removeHrefFromAnchorTags() {
+                var anchorTags = document
+                    .getElementById("messy-lyrics")
+                    .getElementsByTagName("a");
+
+                for (var i = 0; i < anchorTags.length; i++) {
+                    anchorTags[i].removeAttribute("href");
+                }
+            }
+            removeHrefFromAnchorTags();
+        }
+        let title;
+        async function startLoading() {
+            setInterval(async () => {
+                let newTitle = await getData2("/spotify");
+                if (title !== newTitle) {
+                    document.getElementById("messy-lyrics").innerHTML = "Loading Lyrics..."
+                    document.getElementById("title").innerHTML = "Loading Song..."
+                    document.getElementById("messy-lyrics").innerHTML = await getData2(
+                        "/lyrics"
+                    );
+                    if(document.getElementById("messy-lyrics").innerHTML == "undefined"){ 
+                        location.reload()
+                    }
+                    title = await getData2("/spotify");
+                    document.getElementById("title").innerHTML = `LyricsLive - ${title.split("-")[1]
+                        }`;
+                    document.getElementById("song-title").innerHTML = title;
+                    document.getElementById("messy-lyrics").scrollTop = 0;
+                    document.getElementById("messy-lyrics").scrollIntoView();
+                    document
+                        .getElementById("messy-lyrics")
+                        .scroll({ top: 0, behavior: "smooth" });
+                    const tabScroll = document.getElementById("messy-lyrics");
+                    removeAllAttributesFromBody();
+                    window.scrollTo({
+                        behavior: "smooth",
+                        left: 0,
+                        top: tabScroll.offsetTop - 80,
+                    });
+                }
+            }, 1000);
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+        var ul = document.querySelector(".scrolling-words-box ul");
+        var itemCount = 5; // Equivalent to $item-count in SCSS
+
+        // Calculate animation duration based on number of items
+        var animationDuration = itemCount * 4; // Adjust speed as needed
+        ul.style.animationDuration = animationDuration + "s";
+      });
+      setInterval(async ()=>{
+        try {
+            if(await getData2("/spotify")){ 
+                document.getElementById("fullscreen").style.opacity = 0.5;
+                document.getElementsByClassName("song")[0].style.opacity = 1;
+                document.getElementById("first-page").remove()
+                startLoading()
+            }
+        } catch (e){ 
+            console.log(e)
+        }
+      },1000)
+    </script>
+</body>
+
 </html>
