@@ -386,7 +386,7 @@
                 if (title !== newTitle) {
                     document.getElementById("messy-lyrics").innerHTML = "Loading Lyrics..."
                     document.getElementById("title").innerHTML = "Loading Song..."
-                    document.getElementById("messy-lyrics").innerHTML = await getData2(
+                    document.getElementById("song-title").innerHTML = await getData2(
                         "/lyrics"
                     );
                     if (document.getElementById("messy-lyrics").innerHTML == "undefined") {
