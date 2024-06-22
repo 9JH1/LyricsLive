@@ -244,6 +244,12 @@
                 transform: translateY(-80%);
             }
         }
+        #album {
+            position:fixed;
+            top:8vh;
+            right:2vw;
+            width: 25vw;
+        }
     </style>
 </head>
 
@@ -289,6 +295,7 @@
             </ul>
         </div>
     </div>
+    <img id="album">
     <div class="gradient"></div>
     <div id="messy-lyrics"></div>
     <div class="song">
@@ -389,6 +396,7 @@
                     document.getElementById("messy-lyrics").innerHTML = await getData2(
                         "/lyrics"
                     );
+                    document.getElementById("album").src = await getData2("/album_img")
                     if (document.getElementById("messy-lyrics").innerHTML == "undefined") {
                         location.reload()
                     }
