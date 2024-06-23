@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="window-title">LyricsLive</title>
+    <style>
+      @font-face {
+        font-family: "CircularSpotifyText-Bold";
+        src: url("font/CircularSpotifyText-Bold.woff2") format("woff2"),
+          /* Modern Browsers */ url("font/CircularSpotifyText-Bold.woff")
+            format("woff");
+        /* Legacy Browsers */
+        font-weight: bold;
+        font-style: normal;
+      }
+      body {
+        overflow: hidden;
+        color: white;
+        font-family: "CircularSpotifyText-Bold";
+        width: 100vw;
+        height: 100vh;
+        background-color: black;
+        padding: 0px;
+        .info {
+          height: fit-content;
+          --icon-size: 40px;
+          position: fixed;
+          display: flex;
+          left: 2%;
+          top: 4%;
+          .icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            img {
+              filter: grayscale(100%);
+            }
+          }
+          .text {
+            height: var(--icon-size);
+            color: grey;
+            .text-child {
+              height: 50%;
+              display: flex;
+              align-items: center;
+            }
+            #album {
+              font-size: 1.4em;
+              margin-top: 5px;
+            }
+          }
+        }
+        .cover {
+          position: fixed;
+          bottom: 4%;
+          left: 2%;
+          display: flex;
+          #cover {
+            width: 190px;
+            height: 190px;
+            border-radius: 20px;
+            animation: thumb 6s ease 0s forwards;
+          }
+          .song {
+            margin-left: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            #title {
+              width: 100%;
+
+              font-size: 2em;
+            }
+            #band {
+              width: 100%;
+              margin-bottom: 20px;
+            }
+          }
+        }
+        .lyrics {
+          position: fixed;
+          width: 100%;
+          text-align: end;
+          height: 100%;
+          right: 0%;
+          padding-right: 3vw;
+          color: white;
+          font-family: "CircularSpotifyText-Bold";
+          overflow-x: hidden;
+          text-wrap: nowrap;
+          overflow-y: scroll;
+          font-size: 2.5vw;
+          padding: 1.5vw;
+          box-sizing: border-box;
+          scrollbar-width: thin;
+
+          * {
+            font-style: normal;
+            text-decoration: none;
+            color: white;
+            user-select: none;
+            pointer-events: none;
+          }
+        }
+      }
+      @keyframes thumb {
+        50%,
+        70% {
+          width: 300px;
+          height: 300px;
+        }
+        100% {
+          width: 190px;
+          height: 190px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="info">
+      <div class="icon">
+        <img
+          src="https://open.spotifycdn.com/cdn/images/favicon.0f31d2ea.ico"
+        />
+      </div>
+      <div class="text">
+        <div class="text-child">PLAYING FROM ALBUM</div>
+        <div class="text-child" id="album"></div>
+      </div>
+    </div>
+    <div class="cover">
+      <img id="cover" />
+      <div class="song">
+        <div id="title"></div>
+
+        <div id="band"></div>
+      </div>
+    </div>
+    <div class="lyrics" id="messy-lyrics"></div>
+  </body>
+  <script>
+    function getData2(endpoint) {
+      return fetch(`http://127.0.0.1:5000${endpoint}`)
+        .then((res) => res.text())
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+    /*
+    let fullScreenToggle = "False";
+    document.getElementById("fullscreen").addEventListener("click", () => {
+      if (fullScreenToggle == "False") {
+        function goFullscreen() {
+          const elem = document.body;
+          if (elem.requestFullscreen) {
+            elem.requestFullscreen();
+          } else if (elem.mozRequestFullScreen) {
+            elem.mozRequestFullScreen();
+          } else if (elem.webkitRequestFullscreen) {
+            elem.webkitRequestFullscreen();
+          } else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+          }
+        }
+
+        document.getElementById("fullscreen").innerHTML = `
+                  <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 24 24" class="Svg-sc-ytk21e-0 bneLcE"><path d="M21.707 2.293a1 1 0 0 1 0 1.414L17.414 8h1.829a1 1 0 0 1 0 2H14V4.757a1 1 0 1 1 2 0v1.829l4.293-4.293a1 1 0 0 1 1.414 0zM2.293 21.707a1 1 0 0 1 0-1.414L6.586 16H4.757a1 1 0 0 1 0-2H10v5.243a1 1 0 0 1-2 0v-1.829l-4.293 4.293a1 1 0 0 1-1.414 0z"></path></svg>
+                  `;
+        fullScreenToggle = "True";
+        goFullscreen();
+      } else {
+        function closeFullscreen() {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+        }
+        document.getElementById("fullscreen").innerHTML = `
+                  <svg data-encore-id="icon" role="img" aria-hidden="true" viewBox="0 0 16 16" class="Svg-sc-ytk21e-0 dYnaPI">
+                      <path
+                          d="M6.53 9.47a.75.75 0 0 1 0 1.06l-2.72 2.72h1.018a.75.75 0 0 1 0 1.5H1.25v-3.579a.75.75 0 0 1 1.5 0v1.018l2.72-2.72a.75.75 0 0 1 1.06 0zm2.94-2.94a.75.75 0 0 1 0-1.06l2.72-2.72h-1.018a.75.75 0 1 1 0-1.5h3.578v3.579a.75.75 0 0 1-1.5 0V3.81l-2.72 2.72a.75.75 0 0 1-1.06 0z">
+                      </path>
+                  </svg>
+                  `;
+        fullScreenToggle = "False";
+        closeFullscreen();
+      }
+    });
+    */
+    // Vars
+    const windowTitle = document.getElementById("window-title");
+    const spotifyTitle = document.getElementById("title");
+    const spotifyLyrics = document.getElementById("messy-lyrics");
+    const spotifyAlbum = document.getElementById("album");
+    const spotifyAlbumImage = document.getElementById("cover");
+    const spotifyBand = document.getElementById("band");
+    let title = "";
+
+    setInterval(async () => {
+      let newTitle = await getData2("/spotify");
+      if (document.getElementById("messy-lyrics").innerHTML == "undefined") {
+        location.href = "index.html";
+      }
+      if ((await title) !== newTitle) {
+        const packet = JSON.parse(await getData2("/packet"));
+        title = packet["song_tech"];
+        spotifyLyrics.innerHTML = packet["lyrics"];
+        spotifyAlbumImage.src = packet["album_cover"];
+        windowTitle.innerHTML = `LyricsLive - ${packet["song"]}`;
+        spotifyBand.innerHTML = packet["artist"];
+        spotifyTitle.innerHTML = packet["song"];
+        spotifyLyrics.scrollTop = 0;
+        spotifyAlbum.innerHTML = packet["album"];
+        spotifyLyrics.scrollIntoView();
+        spotifyLyrics.scroll({ top: 0, behavior: "smooth" });
+        window.scrollTo({
+          behavior: "smooth",
+          left: 0,
+        });
+      }
+    }, 2000);
+  </script>
+</html>

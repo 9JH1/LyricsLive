@@ -7,13 +7,10 @@ import flask
 from flask_cors import CORS
 import re
 from urllib.parse import urljoin
-import sys
 import time 
-import platform
-import argparse
 
 
-def get_title_windows():
+def get_window_titles():
     window_data = {}
     def enum_windows_callback(hwnd, _):
         _, pid = win32process.GetWindowThreadProcessId(hwnd)
@@ -47,7 +44,7 @@ CORS(app)
 @app.route("/spotify")
 def render_song_info():
     spotify_song = ""
-    for process_name, windows in get_title_windows().items():
+    for process_name, windows in get_window_titles().items():
         if(process_name == "Spotify.exe"):
             spotify_song = [s.strip() for s in windows[0]["title"].split("-", 1)]
     return f"{spotify_song[0]} - {spotify_song[1]}"
@@ -57,63 +54,10 @@ def return_list_packet():
     packet = {}
     
     spotify_song = ""
-    if platform.system() == "Windows":
-            for process_name, windows in get_title_windows().items():
-                if process_name == "Spotify.exe":
-                    spotify_song = [s.strip() for s in windows[0]["title"].split("-", 1)]
-                    spotify_song[1].replace("-"," ")
-    elif platform.system() == "Linux":
-        parser = argparse.ArgumentParser()
-        parser.add_argument(
-            '-t',
-            '--trunclen',
-            type=int,
-            metavar='trunclen'
-        )
-        parser.add_argument(
-            '-f',
-            '--format',
-            type=str,
-            metavar='custom format',
-            dest='custom_format'
-        )
-        parser.add_argument(
-            '-p',
-            '--playpause',
-            type=str,
-            metavar='play-pause indicator',
-            dest='play_pause'
-        )
-        parser.add_argument(
-            '--font',
-            type=str,
-            metavar='the index of the font to use for the main label',
-            dest='font'
-        )
-        parser.add_argument(
-            '--playpause-font',
-            type=str,
-            metavar='the index of the font to use to display the playpause indicator',
-            dest='play_pause_font'
-        )
-        parser.add_argument(
-            '-q',
-            '--quiet',
-            action='store_true',
-            help="if set, don't show any output when the current song is paused",
-            dest='quiet',
-        )
-
-        args = parser.parse_args()
-
-
-        def fix_string(string):
-            # corrects encoding for the python version used
-            if sys.version_info.major == 3:
-                spotify_song = string.split("-")
-            else:
-                return string.encode('utf-8')
-
+    for process_name, windows in get_window_titles().items():
+        if process_name == "Spotify.exe":
+            spotify_song = [s.strip() for s in windows[0]["title"].split("-", 1)]
+            spotify_song[1].replace("-"," ")
     spotify_song[1] = spotify_song[1].replace(".","")
     spotify_song[1] = spotify_song[1].replace("&","and")
     spotify_song[1] = spotify_song[1].replace("'","")
@@ -151,7 +95,7 @@ def return_list_packet():
         )[1:-1]
     else:
         print(f"Failed to retrieve {packet['endpoint']} Status code:{response.status_code}")
-        return "Server Issue Occurred, Page Not Found"
+        return "Server Issue Occured, Page Not Found"
     return flask.jsonify(packet)
 
 
