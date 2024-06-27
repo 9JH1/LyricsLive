@@ -203,16 +203,15 @@
     const spotifyAlbum = document.getElementById("album");
     const spotifyAlbumImage = document.getElementById("cover");
     const spotifyBand = document.getElementById("band");
-    let title = "";
+    let packetOld = "";
 
     setInterval(async () => {
-      let newTitle = await getData2("/spotify");
+      let packet = await getData2("/packet");
       if (document.getElementById("messy-lyrics").innerHTML == "undefined") {
         location.href = "index.html";
       }
-      if ((await title) !== newTitle) {
-        const packet = JSON.parse(await getData2("/packet"));
-        title = packet["song_tech"];
+      if ((await packet) !== packetOld) {
+        packetOld = packet;
         spotifyLyrics.innerHTML = packet["lyrics"];
         spotifyAlbumImage.src = packet["album_cover"];
         windowTitle.innerHTML = `LyricsLive - ${packet["song"]}`;

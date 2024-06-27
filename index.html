@@ -389,8 +389,8 @@
         let title;
         async function startLoading() {
             setInterval(async () => {
-                let newTitle = await getData2("/spotify");
-                if (title !== newTitle) {
+                let newPacket = await getData2("/packet");
+                if (title !== newPacket) {
                     document.getElementById("messy-lyrics").innerHTML = "Loading Lyrics..."
                     document.getElementById("title").innerHTML = "Loading Song..."
                     document.getElementById("messy-lyrics").innerHTML = await getData2(
