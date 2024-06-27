@@ -206,7 +206,8 @@
     let packetOld = "";
 
     setInterval(async () => {
-      let packet = await getData2("/packet");
+      let packet = JSON.parse(await getData2("/packet"));
+      console.log(packet);
       if ((await packet) !== packetOld) {
         packetOld = packet;
         spotifyLyrics.innerHTML = packet["lyrics"];
