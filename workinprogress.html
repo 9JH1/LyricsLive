@@ -203,12 +203,12 @@
     const spotifyAlbum = document.getElementById("album");
     const spotifyAlbumImage = document.getElementById("cover");
     const spotifyBand = document.getElementById("band");
-    let packetOld = "";
+    let packetOld = {};
 
     setInterval(async () => {
       let packet = JSON.parse(await getData2("/packet"));
       console.log(packet);
-      if ((await packet) !== packetOld) {
+      if ((await packet["song"]) !== packetOld["song"]) {
         packetOld = packet;
         spotifyLyrics.innerHTML = packet["lyrics"];
         spotifyAlbumImage.src = packet["album_cover"];
