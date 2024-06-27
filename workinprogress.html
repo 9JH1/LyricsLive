@@ -207,9 +207,6 @@
 
     setInterval(async () => {
       let packet = await getData2("/packet");
-      if (document.getElementById("messy-lyrics").innerHTML == "undefined") {
-        location.href = "index.html";
-      }
       if ((await packet) !== packetOld) {
         packetOld = packet;
         spotifyLyrics.innerHTML = packet["lyrics"];
