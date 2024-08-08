@@ -41,8 +41,7 @@ def return_list_packet():
                 return window_data
             for process_name, windows in get_title_windows().items():
                 if process_name == "Spotify.exe":
-                    spotify_song = [s.strip() for s in windows[0]["title"].split("-", 1)]
-                    spotify_song[1].replace("-"," ")
+                    spotify_song = windows[0]['title']
     elif platform.system() == "Linux":
         def get_spot_linux():
             parser = argparse.ArgumentParser()
@@ -149,23 +148,19 @@ def return_list_packet():
                                                 song=song,
                                                 play_pause=play_pause,
                                                 album=album))
-
             except Exception as e:
                     print(e)
-
-        
         spotify_song = get_spot_linux().split("-")
 
-        def fix_string(string):
-            # corrects encoding for the python version used
-            if sys.version_info.major == 3:
-                spotify_song = string.split("-")
-            else:
-                return string.encode('utf-8')
+    spotify_song = spotify_song.split("-",1)
+    if str(spotify_song[1]).replace("-","") != spotify_song[1]:
+        spotify_song_tmp = spotify_song[1].split("-")
+        if str(spotify_song_tmp[1].lower).replace("remaster","") != spotify_song_tmp[1]:
+           spotify_song[1] = spotify_song_tmp[0]
+
     spotify_song[1] = spotify_song[1].replace(".","")
     spotify_song[1] = spotify_song[1].replace("&","and")
     spotify_song[1] = spotify_song[1].replace("'","")
-    
     artist_name = re.sub(r'[^a-zA-Z0-9\s]', '', spotify_song[0]).strip()
     song_title = re.sub(r'[^a-zA-Z0-9\s]', ' ', spotify_song[1]).strip()
     artist_name_url = re.sub(r'\s+', '-', artist_name)
@@ -174,13 +169,15 @@ def return_list_packet():
     packet["endpoint"] = f"https://genius.com/{artist_name_url}-{song_title_url.lower()}-lyrics"
     packet["song"] = spotify_song[1]
     packet["artist"] = artist_name
-
     
     response = requests.get(packet["endpoint"])
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
-        packet["lyrics"] = re.sub(r'\[[^\]]+\]', '', str(soup.find_all(attrs={"data-lyrics-container": "true"})))
+        packet["lyrics"] = str(soup.find_all(attrs={"data-lyrics-container": "true"}))
+        packet["lyrics"] = packet["lyrics"].replace("е","e")
+        packet["lyrics"] = packet["lyrics"][1:-1]
+        packet["lyrics"] = re.sub(r'\s+', ' ', re.sub(r'\[.*?\]', '',packet["lyrics"] )).strip()
 
         for img_tag in soup.find_all('img'):
                 src = img_tag.get('src')
@@ -199,6 +196,7 @@ def return_list_packet():
     else:
         print(f"Failed to retrieve {packet['endpoint']} Status code:{response.status_code}")
         return "Server Issue Occurred, Page Not Found"
+    print(packet)
     return flask.jsonify(packet)
 
 
