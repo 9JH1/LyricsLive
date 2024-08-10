@@ -281,7 +281,7 @@
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           const tagName = node.tagName.toLowerCase();
 
-          if (tagName === "br") {
+          if (tagName === "br" || tagName === "i") {
             // Retain <br> tags
             fragment.appendChild(document.createElement("br"));
           } else if (
@@ -409,7 +409,6 @@
             spotifyLyrics.style.color = "white";
           }, 300);
         }, 300);
-
         spotifyLyrics.scroll({ top: 0, behavior: "smooth" });
         window.scrollTo({
           behavior: "smooth",
