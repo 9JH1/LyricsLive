@@ -281,13 +281,14 @@
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           const tagName = node.tagName.toLowerCase();
 
-          if (tagName === "br" || tagName === "i") {
+          if (tagName === "br") {
             // Retain <br> tags
             fragment.appendChild(document.createElement("br"));
           } else if (
             tagName === "a" ||
             tagName === "span" ||
-            tagName === "div"
+            tagName === "div" ||
+            tagName === "i"
           ) {
             // Create a new element without attributes or styles
             const newElement = document.createElement(tagName);
