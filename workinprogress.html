@@ -114,6 +114,7 @@
           z-index: 1;
           backdrop-filter: blur(40vh);
           background: rgba(0, 0, 0, 0.7);
+          transition: color 300ms ease-in-out;
           * {
             font-style: normal;
             text-decoration: none;
@@ -381,7 +382,6 @@
         );
         */
         document.body.style.backgroundImage = `url(${packet["artist_cover"]})`;
-        spotifyLyrics.innerHTML = packet["lyrics"];
         spotifyAlbumImage.src = packet["album_cover"];
         spotifyAlbumImage.style.animation = "thumb 6s ease 0s";
 
@@ -399,7 +399,17 @@
         spotifyLyrics.scrollTop = 0;
         spotifyAlbum.innerHTML = packet["album"];
         spotifyLyrics.scrollIntoView();
-        cleanElement(spotifyLyrics);
+        spotifyLyrics.style.transition = "";
+        spotifyLyrics.style.color = "transparent";
+        setTimeout(() => {
+          spotifyLyrics.innerHTML = packet["lyrics"];
+          cleanElement(spotifyLyrics);
+          setTimeout(() => {
+            spotifyLyrics.style.transition = "color 1s ease-in-out;";
+            spotifyLyrics.style.color = "white";
+          }, 300);
+        }, 300);
+
         spotifyLyrics.scroll({ top: 0, behavior: "smooth" });
         window.scrollTo({
           behavior: "smooth",
