@@ -197,7 +197,13 @@ def return_list_packet():
     else:
         print(f"Failed to retrieve {packet['endpoint']} Status code:{response.status_code}")
         return "Server Issue Occurred, Page Not Found"
-    print(packet)
+    
+    # do the same for the artist pfp
+    response = requests.get(f"https://genius.com/artists/{artist_name_url}");
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.content, 'html.parser')
+        packet["artist_cover"] = f"https{(str((str(str(soup.find_all(class_="user_avatar")).split("url")[1]).split("https"))[1]).split("');"))[0]}"
+
     return flask.jsonify(packet)
 
 
