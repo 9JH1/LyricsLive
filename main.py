@@ -9,6 +9,7 @@ import sys
 import time 
 import platform
 import argparse
+print("VERSION 7")
 if platform.system() == "Windows":
     import win32gui
     import win32process
