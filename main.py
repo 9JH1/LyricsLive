@@ -150,12 +150,13 @@ def return_list_packet():
                                                 album=album))
             except Exception as e:
                     print(e)
-        spotify_song = get_spot_linux().split("-")
+        spotify_song = get_spot_linux()
 
     spotify_song = spotify_song.split("-",1)
     if str(spotify_song[1]).replace("-","") != spotify_song[1]:
         spotify_song_tmp = spotify_song[1].split("-")
-        if str(spotify_song_tmp[1].lower).replace("remaster","") != spotify_song_tmp[1]:
+        print(str(spotify_song_tmp[1].lower()).replace("remaster",""))
+        if str(spotify_song_tmp[1].lower()).replace("remaster","") != spotify_song_tmp[1].lower():
            spotify_song[1] = spotify_song_tmp[0]
 
     spotify_song[1] = spotify_song[1].replace(".","")
