@@ -54,8 +54,7 @@ def return_list_packet():
 
 
             # Default parameters
-            output = fix_string(u'{artist} - {song}')
-            trunclen = 35
+            
             try:
                 session_bus = dbus.SessionBus()
                 spotify_bus = session_bus.get_object(
@@ -69,30 +68,18 @@ def return_list_packet():
                 )
 
                 metadata = spotify_properties.Get('org.mpris.MediaPlayer2.Player', 'Metadata')
-                status = spotify_properties.Get('org.mpris.MediaPlayer2.Player', 'PlaybackStatus')
-                # Handle main label
-
                 artist = fix_string(metadata['xesam:artist'][0]) if metadata['xesam:artist'] else ''
                 song = fix_string(metadata['xesam:title']) if metadata['xesam:title'] else ''
-                album = fix_string(metadata['xesam:album']) if metadata['xesam:album'] else ''
+                output = fix_string(f'{artist} - {song}')
+                return output
 
-                if (quiet and status == 'Paused') or (not artist and not song and not album):
-                    print('')
-                else:
-                    if font:
-                        artist = label_with_font.format(font=font, label=artist)
-                        song = label_with_font.format(font=font, label=song)
-                        album = label_with_font.format(font=font, label=album)
-
-                    # Add 4 to trunclen to account for status symbol, spaces, and other padding characters
-                    return(output.format(artist=artist,
-                                                song=song,
-                                                play_pause=play_pause,
-                                                album=album))
             except Exception as e:
                     print(e)
         spotify_song = get_spot_linux()
 
+    spotify_song = spotify_song.replace(".","")
+    spotify_song = spotify_song.replace("'","")
+    spotify_song = spotify_song.replace("&","and")
     spotify_song = spotify_song.split("-",1)
     if str(spotify_song[1]).replace("-","") != spotify_song[1]:
         spotify_song_tmp = spotify_song[1].split("-")
@@ -100,9 +87,6 @@ def return_list_packet():
         if str(spotify_song_tmp[1].lower()).replace("remaster","") != spotify_song_tmp[1].lower():
            spotify_song[1] = spotify_song_tmp[0]
 
-    spotify_song[1] = spotify_song[1].replace(".","")
-    spotify_song[1] = spotify_song[1].replace("&","and")
-    spotify_song[1] = spotify_song[1].replace("'","")
     artist_name = re.sub(r'[^a-zA-Z0-9\s]', '', spotify_song[0]).strip()
     song_title = re.sub(r'[^a-zA-Z0-9\s]', ' ', spotify_song[1]).strip()
     artist_name_url = re.sub(r'\s+', '-', artist_name)
@@ -137,17 +121,21 @@ def return_list_packet():
         )[1:-1]
     else:
         print(f"Failed to retrieve {packet['endpoint']} Status code:{response.status_code}")
-        return "Server Issue Occurred, Page Not Found"
+        packet["lyrics"] = "Can't Load Lyrics :( is Artist: "+f'"{packet["artist"]}"'+" on Genius.com?"
+        packet["album"] = "Can't Load Album :("
     
     # do the same for the artist pfp
     response = requests.get(f"https://genius.com/artists/{artist_name_url}");
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
-        packet["artist_cover"] = f"https{(str((str(str(soup.find_all(class_="user_avatar")).split("url")[1]).split("https"))[1]).split("');"))[0]}"
-
+        try:
+            packet["artist_cover"] = f"https{(str((str(str(soup.find_all(class_="user_avatar")).split("url")[1]).split("https"))[1]).split("');"))[0]}"
+        except: 
+            print("Something Went wrong in the artist_cover portion ( line 132 )")
     return flask.jsonify(packet)
 
 
 
-if __name__ == "__main__": 
+if __name__ == "__main__":
+
     app.run(debug=True)
