@@ -104,6 +104,8 @@ def return_list_packet():
         packet["lyrics"] = packet["lyrics"].replace("е","e")
         packet["lyrics"] = packet["lyrics"][1:-1]
         packet["lyrics"] = re.sub(r'\s+', ' ', re.sub(r'\[.*?\]', '',packet["lyrics"] )).strip()
+        packet["lyrics"] = packet["lyrics"].replace(",",",<br>");
+        packet["lyrics"] = packet["lyrics"].replace(".",".<br>");
 
         for img_tag in soup.find_all('img'):
                 src = img_tag.get('src')
@@ -129,7 +131,7 @@ def return_list_packet():
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
         try:
-            packet["artist_cover"] = f"https{(str((str(str(soup.find_all(class_="user_avatar")).split("url")[1]).split("https"))[1]).split("');"))[0]}"
+            packet["artist_cover"] = f"""https{(str((str(str(soup.find_all(class_="user_avatar")).split("url")[1]).split("https"))[1]).split("');"))[0]}"""
         except: 
             print("Something Went wrong in the artist_cover portion ( line 132 )")
     return flask.jsonify(packet)
