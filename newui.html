@@ -162,8 +162,7 @@
 
           let r = 0,
             g = 0,
-            b = 0,
-            a = 0;
+            b = 0;
           const length = data.length / 4;
 
           // Iterate through each pixel
@@ -171,7 +170,6 @@
             r += data[i]; // Red
             g += data[i + 1]; // Green
             b += data[i + 2]; // Blue
-            a += data[i + 3]; // Alpha (not used in average color)
           }
 
           // Calculate average color values
@@ -179,7 +177,28 @@
           g = Math.floor(g / length);
           b = Math.floor(b / length);
 
-          // Resolve with the average color
+          // Function to check if the color is "neutral" (close to gray)
+          const isNeutralColor = (r, g, b) => {
+            const maxChannelDifference = 30; // Define how similar RGB values should be to be considered neutral
+            return (
+              Math.abs(r - g) < maxChannelDifference &&
+              Math.abs(g - b) < maxChannelDifference &&
+              Math.abs(b - r) < maxChannelDifference
+            );
+          };
+
+          // If color is neutral, adjust it to make it more unique
+          if (isNeutralColor(r, g, b)) {
+            if (r < 128) {
+              // Increase saturation by boosting red if it's a dark neutral
+              r += 50;
+            } else {
+              // Make it a unique cool tone by adjusting blue if it's light neutral
+              b += 50;
+            }
+          }
+
+          // Resolve with the potentially adjusted color
           resolve([r, g, b]);
         };
 
@@ -188,6 +207,7 @@
         };
       });
     }
+
     function cleanElement(element) {
       // Create a new document fragment to hold the cleaned content
       const fragment = document.createDocumentFragment();
