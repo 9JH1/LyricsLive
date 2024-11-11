@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="song-title"></title>
+    <style>
+      @font-face {
+        font-family: "CircularSpotifyText-Bold";
+        src: url("font/CircularSpotifyText-Bold.woff2") format("woff2"),
+          /* Modern Browsers */ url("font/CircularSpotifyText-Bold.woff")
+            format("woff");
+        /* Legacy Browsers */
+        font-weight: bold;
+        font-style: normal;
+      }
+      body {
+        font-family: "CircularSpotifyText-Bold";
+        background: rgb(0, 0, 0);
+        transition: background 0.5s ease;
+        transition-delay: 0.25s;
+        color: white;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+        width: 100vw;
+        overflow: hidden;
+      }
+      #lyrics {
+        height: calc(100vh - 20px);
+        background: rgba(0, 0, 0, 0.3);
+        overflow: scroll;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+      #canvas {
+        width: 0px;
+        height: 0px;
+      }
+      .navbar {
+        height: 20px;
+        font-family: "CircularSpotifyText-Bold";
+        transition: background 0.5s ease;
+        width: 100%;
+        font-size: 0.8em;
+        -webkit-box-shadow: 0px 6px 44px 0px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 0px 6px 44px 0px rgba(0, 0, 0, 0.75);
+        box-shadow: 0px 6px 44px 0px rgba(0, 0, 0, 0.75);
+      }
+      .shadow {
+        position: fixed;
+        width: 100vw;
+        height: 50vh;
+        bottom: 0%;
+        background: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8));
+        user-select: none;
+        pointer-events: none;
+      }
+
+      .scroll-left {
+        overflow: hidden;
+        position: relative;
+      }
+      .scroll-left .second {
+        margin-left: 100%;
+      }
+      .scroll-left p {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        margin: 0;
+        /* Apply animation */
+        -moz-animation: scroll-left 30s linear infinite;
+        -webkit-animation: scroll-left 30s linear infinite;
+        animation: scroll-left 30s linear infinite;
+      }
+      /* Define the animation */
+      @-moz-keyframes scroll-left {
+        0% {
+          -moz-transform: translateX(0%);
+        }
+        100% {
+          -moz-transform: translateX(-100%);
+        }
+      }
+      @-webkit-keyframes scroll-left {
+        0% {
+          -webkit-transform: translateX(0%);
+        }
+        100% {
+          -webkit-transform: translateX(-100%);
+        }
+      }
+      @keyframes scroll-left {
+        0% {
+          -moz-transform: translateX(0%);
+          -webkit-transform: translateX(0%);
+          transform: translateX(0%);
+        }
+        100% {
+          -moz-transform: translateX(-100%);
+          -webkit-transform: translateX(-100%);
+          transform: translateX(-100%);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="navbar scroll-left" id="navbar">
+      <p>
+        <span id="song-title-1"></span>
+        -
+        <span id="band-title-1"></span>
+      </p>
+      <p class="second">
+        <span id="song-title-2"></span>
+        -
+        <span id="band-title-2"></span>
+      </p>
+    </div>
+
+    <div class="shadow"></div>
+    <div id="lyrics"></div>
+    <canvas id="canvas"></canvas>
+  </body>
+  <script title="functions">
+    function getData2(endpoint) {
+      return fetch(`http://127.0.0.1:5000${endpoint}`)
+        .then((res) => res.text())
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+    async function getAverageColor(imageUrl) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "Anonymous"; // To handle CORS issues if the image is from another domain
+        img.src = imageUrl;
+
+        img.onload = () => {
+          const canvas = document.getElementById("canvas");
+          const context = canvas.getContext("2d");
+
+          // Set canvas size to image size
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          // Draw the image onto the canvas
+          context.drawImage(img, 0, 0, img.width, img.height);
+
+          // Get the image data from the canvas
+          const imageData = context.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
+          const data = imageData.data;
+
+          let r = 0,
+            g = 0,
+            b = 0,
+            a = 0;
+          const length = data.length / 4;
+
+          // Iterate through each pixel
+          for (let i = 0; i < data.length; i += 4) {
+            r += data[i]; // Red
+            g += data[i + 1]; // Green
+            b += data[i + 2]; // Blue
+            a += data[i + 3]; // Alpha (not used in average color)
+          }
+
+          // Calculate average color values
+          r = Math.floor(r / length);
+          g = Math.floor(g / length);
+          b = Math.floor(b / length);
+
+          // Resolve with the average color
+          resolve([r, g, b]);
+        };
+
+        img.onerror = (error) => {
+          reject(error);
+        };
+      });
+    }
+    function cleanElement(element) {
+      // Create a new document fragment to hold the cleaned content
+      const fragment = document.createDocumentFragment();
+      let hasTextContent = false;
+
+      // Function to recursively clean nodes
+      function cleanNode(node) {
+        if (
+          node.nodeType === Node.TEXT_NODE &&
+          node.textContent.trim() !== ""
+        ) {
+          // Flag that text content has been encountered
+          hasTextContent = true;
+          // Append text nodes directly
+          fragment.appendChild(document.createTextNode(node.textContent));
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const tagName = node.tagName.toLowerCase();
+
+          if (tagName === "br" && hasTextContent) {
+            // Append <br> only if text has been encountered
+            fragment.appendChild(document.createElement("br"));
+          } else if (
+            tagName === "a" ||
+            tagName === "span" ||
+            tagName === "div" ||
+            tagName === "i"
+          ) {
+            // Create a new element without attributes or styles
+            const newElement = document.createElement(tagName);
+            let hasContent = false;
+            node.childNodes.forEach((child) => {
+              // Clean child nodes
+              cleanNode(child);
+              // Track if the current node has non-empty content
+              if (
+                child.nodeType === Node.ELEMENT_NODE ||
+                (child.nodeType === Node.TEXT_NODE &&
+                  child.textContent.trim() !== "")
+              ) {
+                hasContent = true;
+              }
+            });
+
+            // Only append the new element if it has content
+            if (hasContent) {
+              fragment.appendChild(newElement);
+            }
+          }
+        }
+      }
+
+      // Start cleaning from the provided element
+      Array.from(element.childNodes).forEach((child) => cleanNode(child));
+
+      // Replace the original element's content with the cleaned content
+      element.innerHTML = "";
+      element.appendChild(fragment);
+
+      // Final pass to remove any elements with empty innerText
+      function removeEmptyElements(el) {
+        Array.from(el.childNodes).forEach((child) => {
+          if (child.nodeType === Node.ELEMENT_NODE) {
+            removeEmptyElements(child);
+            if (
+              child.innerText.trim() === "" &&
+              child.tagName.toLowerCase() !== "br"
+            ) {
+              child.remove();
+            }
+          }
+        });
+      }
+
+      removeEmptyElements(element);
+      for (let i = 0; i < 10; i++) {
+        element.append(document.createElement("br"));
+      }
+    }
+  </script>
+  <script title="packets">
+    const windowTitle = document.getElementById("song-title");
+    const spotifyLyrics = document.getElementById("lyrics");
+    let packetOld = { song: "" };
+    setInterval(async () => {
+      let packet = JSON.parse(await getData2("/packet"));
+      if ((await packet["song"]) !== packetOld["song"]) {
+        packetOld = packet;
+        console.log(packet);
+        getAverageColor(packet["artist_cover"]).then(
+          (averageColorArtistCover) => {
+            document.body.style.background = `rgb(${averageColorArtistCover[0]},${averageColorArtistCover[1]},${averageColorArtistCover[2]})`;
+            document.getElementById(
+              "navbar"
+            ).style.background = `rgb(${averageColorArtistCover[0]},${averageColorArtistCover[1]},${averageColorArtistCover[2]})`;
+          }
+        );
+        windowTitle.innerHTML = `LyricsLive - ${packet["song"]}`;
+        spotifyLyrics.innerHTML = packet["lyrics"];
+        cleanElement(spotifyLyrics);
+        document.getElementById("song-title-1").innerHTML = packet["song"];
+        document.getElementById("song-title-2").innerHTML = packet["song"];
+        document.getElementById("band-title-1").innerHTML = packet["artist"];
+        document.getElementById("band-title-2").innerHTML = packet["artist"];
+      }
+    }, 2000);
+  </script>
+</html>

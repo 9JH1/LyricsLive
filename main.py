@@ -81,12 +81,11 @@ def return_list_packet():
     spotify_song = spotify_song.replace("'","")
     spotify_song = spotify_song.replace("&","and")
     spotify_song = spotify_song.split("-",1)
-    if str(spotify_song[1]).replace("-","") != spotify_song[1]:
-        spotify_song_tmp = spotify_song[1].split("-")
-        print(str(spotify_song_tmp[1].lower()).replace("remaster",""))
+    if str(spotify_song[1]).replace("-","") != spotify_song[1] or str(str(spotify_song[1]).lower()).replace("remaster","") != spotify_song[1].lower():
+        spotify_song_tmp = spotify_song
+        spotify_song[1] = spotify_song_tmp[1].split("(")[0];
         if str(spotify_song_tmp[1].lower()).replace("remaster","") != spotify_song_tmp[1].lower():
-           spotify_song[1] = spotify_song_tmp[0]
-
+           spotify_song[1] = spotify_song_tmp[1].split("(")[0];
     artist_name = re.sub(r'[^a-zA-Z0-9\s]', '', spotify_song[0]).strip()
     song_title = re.sub(r'[^a-zA-Z0-9\s]', ' ', spotify_song[1]).strip()
     artist_name_url = re.sub(r'\s+', '-', artist_name)
@@ -95,9 +94,7 @@ def return_list_packet():
     packet["endpoint"] = f"https://genius.com/{artist_name_url}-{song_title_url.lower()}-lyrics"
     packet["song"] = spotify_song[1]
     packet["artist"] = artist_name
-    
     response = requests.get(packet["endpoint"])
-
     if response.status_code == 200:
         soup = BeautifulSoup(response.content, 'html.parser')
         packet["lyrics"] = str(soup.find_all(attrs={"data-lyrics-container": "true"}))
@@ -139,5 +136,4 @@ def return_list_packet():
 
 
 if __name__ == "__main__":
-
     app.run(debug=True)
